@@ -1,4 +1,5 @@
 # TODO/VISION/PLANS:
+    . Plans to read into a log json file
 
 ## To Implement initialy
 ### 1. **Latency Metrics**
