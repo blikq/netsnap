@@ -11,28 +11,37 @@ pub struct NetSnap {
 }
 
 impl NetSnap {
-
     // initalize NetSnap Object
     pub fn new(url: &str) -> Self {
-        Self { 
+        Self {
             url: url.to_string(),
             port: 80,
         }
     }
 
-    pub async fn run(&self) {
-        // DNS LookUp
-        //TODO: Resolve different types of urls
-        let dns_lookup_duration = dns_lookup(&format!("{}:{}",self.url, self.port).to_string()).await.unwrap();
-        
-    }
-
-    pub fn print_url(&self) {
-        println!("{}:{}", self.url, self.port)
-    }
-
+    // Change Port
     pub fn port(&mut self, port: u16) -> &mut Self {
         self.port = port;
         self
+    }
+
+    // Run service
+    pub async fn run(&self) {
+
+        
+
+        
+    }
+
+
+
+
+
+
+
+
+    // Debug methods
+    pub fn print_url(&self) {
+        println!("{}:{}", self.url, self.port)
     }
 }
