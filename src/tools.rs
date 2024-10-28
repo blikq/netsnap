@@ -1,7 +1,12 @@
 use tokio::net::lookup_host;
 
+
+use std::future::Future;
+
 use std::io::ErrorKind;
 use std::time::{Duration, Instant};
+
+use std::thread;
 
 use reqwest::Client;
 
@@ -51,18 +56,27 @@ pub async fn handshake_timer(url: &String) -> Result<Duration, InError> {
     }
 }
 
-pub async fn ttfb_timer(url: &String){
+// pub async fn ttfb_timer(url: &String){
+//     let client = Client::new();
+
+//     let mut a_url = String::new();
+//     if !(url.starts_with("http://") | url.starts_with("https://")){
+//         a_url = format!("https://{}", url.clone());
+//     };
+
+//     // Measure  handshake + HTTP request time
+//     let ttfb_start = Instant::now();
+//     let response = client.get(a_url.as_str()).send();
+//     for i in response{
+
+//     }
+// }
+
+
+
+pub async fn process_request(url: String) {
     let client = Client::new();
 
-    let mut a_url = String::new();
-    if !(url.starts_with("http://") | url.starts_with("https://")){
-        a_url = format!("https://{}", url.clone());
-    };
+    let req = client.get(url.as_str()).send().await;
 
-    // Measure  handshake + HTTP request time
-    let ttfb_start = Instant::now();
-    let response = client.get(a_url.as_str()).send();
-    for i in response{
-        
-    }
 }

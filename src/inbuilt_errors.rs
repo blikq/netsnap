@@ -2,6 +2,7 @@
 pub enum Error {
     DnsLookupError(Info),
     HandshakeError(Info),
+    InvalidConfig(Info),
 }
 
 #[derive(Debug)]
