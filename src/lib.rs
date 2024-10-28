@@ -50,14 +50,14 @@ impl NetSnap {
 
     // Run service
     pub async fn run(&self) {
-        let mut max = self.max.clone() as i32;
+        let mut max = self.max.clone();
         println!("Preparing to senf {max} requests");
         while max > 0 {
             println!("started");
 
 
-            let batch_size = if max >= self.rate as i32 {
-                self.rate as i32
+            let batch_size = if max >= self.rate {
+                self.rate
             } else {
                 max
             };
