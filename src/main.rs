@@ -3,7 +3,7 @@ use netsnap::NetSnap;
 
 #[tokio::main]
 async fn main() {
-    let mut client = NetSnap::new("http://3.75.186.200/")
+    let mut client = NetSnap::new("http://ofkr/")
         .config(9, 5, 500)
         .run()
         .await;

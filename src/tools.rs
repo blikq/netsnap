@@ -74,9 +74,14 @@ pub async fn handshake_timer(url: &String) -> Result<Duration, InError> {
 
 
 
-pub async fn process_request(url: String) {
+pub async fn process_request(url: String) -> Result<(), InError> {
     let client = Client::new();
 
-    let req = client.get(url.as_str()).send().await;
-
+    let req = client.get(url.as_str()).send().await.unwrap();
+    
+    if req.status().is_success() {
+        Ok(())
+    }else{
+        panic!("Website did not return 200")
+    }
 }

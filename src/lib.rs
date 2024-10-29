@@ -12,7 +12,7 @@ pub struct NetSnap {
     port: u16,
     max: u64,
     rate: u64,
-    interval: u64,
+    interval_in_milli: u64,
 }
 
 impl NetSnap {
@@ -23,7 +23,7 @@ impl NetSnap {
             port: 80,
             max: 1,
             rate: 1,
-            interval: 500
+            interval_in_milli: 500
         }
     }
 
@@ -34,11 +34,11 @@ impl NetSnap {
     }
     
     // Returning result to make sure config is valid
-    pub fn config(&mut self, max: u64, rate: u64, interval: u64) -> &mut Self{
+    pub fn config(&mut self, max: u64, rate: u64, interval_in_milli: u64) -> &mut Self{
         if max >= rate{
             self.max = max;
             self.rate = rate;
-            self.interval = interval;
+            self.interval_in_milli = interval_in_milli;
             self
         }else {
             panic!("NETSNAP: INVALID CONFIG")
@@ -50,8 +50,11 @@ impl NetSnap {
 
     // Run service
     pub async fn run(&self) {
+        let mut successful:u64 = 0; 
+        let mut unsuccessful:u64 = 0;
+
         let mut max = self.max.clone();
-        println!("Preparing to senf {max} requests");
+        println!("Preparing to send {max} requests");
         while max > 0 {
             println!("started");
 
@@ -61,12 +64,26 @@ impl NetSnap {
             } else {
                 max
             };
+            let mut tasks = vec![];
+            
             for _ in 0..batch_size {
                 let url_clone = self.url.clone();
-                tokio::spawn( async  move {
+                tasks.push(tokio::spawn(async move {
                     process_request(url_clone).await;
-                });
+                    
+                }));
+            }
+            for task in tasks {
+                let r = task.await;
+                if let Ok(_) = r{
+                    println!("yes");
+                    successful += 1;
+                
+                }else {
+                    println!("no");
 
+                    unsuccessful += 1;
+                }
             }
 
             max -= batch_size;
@@ -74,10 +91,15 @@ impl NetSnap {
             println!("remaining requests left {max}");
             if max > 0{
                 println!("waiting...");
-                tokio::time::sleep(tokio::time::Duration::from_millis(self.interval)).await;
+                tokio::time::sleep(tokio::time::Duration::from_millis(self.interval_in_milli)).await;
             }
         }
-        println!("Finished Benchmark")
+        println!("Finished Benchmark");
+        println!("results\n\tsuccess = {successful}\n\tFailed = {unsuccessful}");
+        let per = (successful/self.max) * 100;
+        let mut grade:String;
+        if per >= 75 {grade=String::from("A")}else if (75>per && per>=65) {grade=String::from("B")}else if (65>per && per>=50) {grade=String::from("C")}else{grade=String::from("F")} 
+        println!("Benchmarking grade {grade}")
     }
 
 
